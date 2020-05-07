@@ -40,6 +40,6 @@ def register_user(sid, data):
     return {"status": "success", "errors": [], "data": client.to_json()}
 
 
-app.run()
+app.run(port=8080)
 
 app_thread.join()
