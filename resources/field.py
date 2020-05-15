@@ -45,6 +45,7 @@ def generate_list_of_aslants(col_row_length, hor=True):
 
 
 class MatchField:
+    stopped = False
     """[row, row, row]"""
 
     def __init__(self, players: List[Player], begining_player_index, size: int = 3):
@@ -148,28 +149,34 @@ class MatchField:
         p = is_all_owned_by_same(fields)
         if not p is None:
             self.winning(p)
-
+    def stop_game(self):
+        self.stopped = True
     def next_turn(self):
-        self.turn_player = not self.turn_player
-        for player in self.players:
-            player.players_turn = False
+        try:
+            self.turn_player = not self.turn_player
+            for player in self.players:
+                player.players_turn = False
 
-        player = self.players[self.turn_player]
-        player.players_turn = True
-        print(f"Player {player} is on turn")
-        cli = False
-        for p in self.players:
-            if not(cli and p.__class__ == CLIPlayer):
-                if p.__class__ == CLIPlayer:
-                    cli = True
-                p.send_message(self.view() + "\n")
-        while True:
-            location = player.get_field_location(self)
-            content = self.get_field_content_by_location(location)
-            if content != EmtpyField:
-                player.send_message("You must specify an not empty field.")
-                continue
-            self.set_field_content_by_location(location, Field(player, player.icon))
-            self.check_winning()
-            break
-        self.next_turn()
+            player = self.players[self.turn_player]
+            player.players_turn = True
+            print(f"Player {player} is on turn")
+            cli = False
+            for p in self.players:
+                if not(cli and p.__class__ == CLIPlayer):
+                    if p.__class__ == CLIPlayer:
+                        cli = True
+                    p.send_message(self.view() + "\n")
+            while not self.stopped:
+                location = player.get_field_location(self)
+                content = self.get_field_content_by_location(location)
+                if content != EmtpyField:
+                    player.send_message("You must specify an not empty field.")
+                    continue
+                self.set_field_content_by_location(location, Field(player, player.icon))
+                self.check_winning()
+                break
+            if not self.stopped:
+                self.next_turn()
+        except KeyboardInterrupt:
+            print("Finished!")
+            exit(0)

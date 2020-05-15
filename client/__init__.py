@@ -8,7 +8,7 @@ loop = asyncio.get_event_loop()
 
 async def main():
     print("Connect")
-    await sio.connect("http://localhost:5000")
+    await sio.connect("https://tic-tac-toe.adribloober.wtf/")
     await sio.wait()
 
 
@@ -18,7 +18,6 @@ async def connect():
     icon = input("Your icon: ")
 
     def callback(data):
-        print(data)
         errors = data["errors"]
         if len(errors) > 0:
             error = errors[0]
