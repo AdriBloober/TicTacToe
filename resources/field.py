@@ -149,8 +149,10 @@ class MatchField:
         p = is_all_owned_by_same(fields)
         if not p is None:
             self.winning(p)
+
     def stop_game(self):
         self.stopped = True
+
     def next_turn(self):
         try:
             self.turn_player = not self.turn_player
@@ -162,7 +164,7 @@ class MatchField:
             print(f"Player {player} is on turn")
             cli = False
             for p in self.players:
-                if not(cli and p.__class__ == CLIPlayer):
+                if not (cli and p.__class__ == CLIPlayer):
                     if p.__class__ == CLIPlayer:
                         cli = True
                     p.send_message(self.view() + "\n")
